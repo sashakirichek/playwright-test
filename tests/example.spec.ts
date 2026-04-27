@@ -85,5 +85,99 @@ test("json_node_persists_after_addition", async ({ page }) => {
 });
 
 test("SolutionsPanel_isVisible", async ({ page }) => {
-  // test "Solutions" button and new panel that should show up with possibility to save current solution
+  const homePage = new HomePage(page);
+  await homePage.navigateToHomePage();
+  await homePage.waitForPageToLoad();
+
+  // Verify Solutions button is visible
+  await homePage.verifySolutionsButtonIsVisible();
+
+  // Click Solutions button to open the panel
+  await homePage.clickSolutionsButton();
+
+  // Verify Solutions panel appears
+  await homePage.verifySolutionsPanelIsVisible();
+});
+
+test("SolutionsPanel_contains_save_button", async ({ page }) => {
+  const homePage = new HomePage(page);
+  await homePage.navigateToHomePage();
+  await homePage.waitForPageToLoad();
+
+  // Open Solutions panel
+  await homePage.clickSolutionsButton();
+  await homePage.verifySolutionsPanelIsVisible();
+
+  // Verify Save Solution button is available
+  await homePage.verifySaveSolutionButtonIsVisible();
+});
+
+test("SolutionsPanel_displays_solutions_list", async ({ page }) => {
+  const homePage = new HomePage(page);
+  await homePage.navigateToHomePage();
+  await homePage.waitForPageToLoad();
+
+  // Open Solutions panel
+  await homePage.clickSolutionsButton();
+  await homePage.verifySolutionsPanelIsVisible();
+
+  // Verify solutions list is displayed
+  await homePage.verifySolutionsListIsVisible();
+});
+
+test("SolutionsPanel_save_solution_functionality", async ({ page }) => {
+  const homePage = new HomePage(page);
+  await homePage.navigateToHomePage();
+  await homePage.waitForPageToLoad();
+
+  // Open Solutions panel
+  await homePage.clickSolutionsButton();
+  await homePage.verifySolutionsPanelIsVisible();
+
+  // Verify Save Solution button is available
+  await homePage.verifySaveSolutionButtonIsVisible();
+
+  // Click Save Solution button
+  await homePage.clickSaveSolutionButton();
+
+  // Verify success message or confirmation appears
+  const successMessage = page.locator('[class*="success"], [role="alert"]');
+  await expect(successMessage).toBeVisible({ timeout: 3000 });
+});
+
+test("SolutionsPanel_can_be_closed", async ({ page }) => {
+  const homePage = new HomePage(page);
+  await homePage.navigateToHomePage();
+  await homePage.waitForPageToLoad();
+
+  // Open Solutions panel
+  await homePage.clickSolutionsButton();
+  await homePage.verifySolutionsPanelIsVisible();
+
+  // Close the panel
+  await homePage.closeSolutionsPanel();
+
+  // Verify panel is no longer visible
+  await homePage.verifySolutionsPanelIsNotVisible();
+});
+
+test("SolutionsPanel_toggle_functionality", async ({ page }) => {
+  const homePage = new HomePage(page);
+  await homePage.navigateToHomePage();
+  await homePage.waitForPageToLoad();
+
+  // Initial state - panel should not be visible
+  await homePage.verifySolutionsPanelIsNotVisible();
+
+  // Toggle to open
+  await homePage.toggleSolutionsPanel();
+  await homePage.verifySolutionsPanelIsVisible();
+
+  // Toggle to close
+  await homePage.toggleSolutionsPanel();
+  await homePage.verifySolutionsPanelIsNotVisible();
+
+  // Toggle to open again
+  await homePage.toggleSolutionsPanel();
+  await homePage.verifySolutionsPanelIsVisible();
 });
