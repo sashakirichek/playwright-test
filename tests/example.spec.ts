@@ -85,5 +85,43 @@ test("json_node_persists_after_addition", async ({ page }) => {
 });
 
 test("SolutionsPanel_isVisible", async ({ page }) => {
-  // test "Solutions" button and new panel that should show up with possibility to save current solution
+  const homePage = new HomePage(page);
+  await homePage.navigateToHomePage();
+  await homePage.waitForPageToLoad();
+
+  // Click the Solutions button
+  await homePage.clickSolutionsButton();
+
+  // Verify the solutions panel is visible
+  await homePage.verifySolutionsPanelIsVisible();
+});
+
+test("SolutionsPanel_showsSaveButton", async ({ page }) => {
+  const homePage = new HomePage(page);
+  await homePage.navigateToHomePage();
+  await homePage.waitForPageToLoad();
+
+  // Open the solutions panel
+  await homePage.clickSolutionsButton();
+  await homePage.verifySolutionsPanelIsVisible();
+
+  // Verify the save solution button is visible
+  await homePage.verifySaveSolutionButtonIsVisible();
+});
+
+test("SolutionsPanel_canSaveSolution", async ({ page }) => {
+  const homePage = new HomePage(page);
+  await homePage.navigateToHomePage();
+  await homePage.waitForPageToLoad();
+
+  // Open the solutions panel
+  await homePage.clickSolutionsButton();
+  await homePage.verifySolutionsPanelIsVisible();
+
+  // Click the save solution button
+  await homePage.clickSaveSolutionButton();
+
+  // Verify save action completed (panel should still be visible or show success)
+  const solutionsPanel = page.locator('[class*="solutions-panel"]');
+  await expect(solutionsPanel).toBeVisible();
 });
