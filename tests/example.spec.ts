@@ -4,22 +4,25 @@ import { HomePage } from "../page-objects/homePage";
 test("has title", async ({ page }) => {
   const homePage = new HomePage(page);
   await homePage.navigateToHomePage();
-  await homePage.verifyPageTitle();
+  await expect(page).toHaveTitle(/visual-programming/);
 });
 
 test("get started link", async ({ page }) => {
   const homePage = new HomePage(page);
   await homePage.navigateToHomePage();
   await homePage.verifyShareButtonIsVisible();
-  await homePage.verifyShareButtonText("Share");
-  await homePage.shareAndVerifyConfirmation();
+  
+  const shareButton = page.getByTitle("Copy shareable URL to clipboard");
+  await expect(shareButton).toContainText("Share");
+  await shareButton.click();
+  await expect(shareButton).toContainText("URL copied!");
 });
 
 test("verify page loads successfully", async ({ page }) => {
   const homePage = new HomePage(page);
   await homePage.navigateToHomePage();
   await homePage.waitForPageToLoad();
-  const title = await homePage.getPageTitle();
+  const title = await page.title();
   expect(title).toContain("visual-programming");
 });
 
@@ -27,8 +30,10 @@ test("share button functionality", async ({ page }) => {
   const homePage = new HomePage(page);
   await homePage.navigateToHomePage();
   await homePage.verifyShareButtonIsVisible();
-  await homePage.clickShareButton();
-  await homePage.verifyURLCopiedConfirmation();
+  
+  const shareButton = page.getByTitle("Copy shareable URL to clipboard");
+  await shareButton.click();
+  await expect(shareButton).toContainText("URL copied!");
 });
 
 test("addJsonElement_showsSuccessfully", async ({ page }) => {
@@ -36,10 +41,13 @@ test("addJsonElement_showsSuccessfully", async ({ page }) => {
   await homePage.navigateToHomePage();
   await homePage.waitForPageToLoad();
 
-  // Verify JSON palette item is visible in the palette
-  await homePage.verifyJsonPaletteItemIsVisible();
-  await homePage.verifyJsonPaletteItemLabel("JSON");
-  await homePage.verifyJsonPaletteItemDescription("JSON operations");
+  // Verify JSON palette item is visible
+  const jsonItem = page.getByTitle("JSON operations");
+  await expect(jsonItem).toBeVisible();
+  const labelElement = jsonItem.locator(".palette-label");
+  await expect(labelElement).toContainText("JSON");
+  const descElement = jsonItem.locator(".palette-desc");
+  await expect(descElement).toContainText("JSON operations");
 
   // Click JSON palette item to add it to the canvas
   await homePage.clickJsonPaletteItem();
@@ -54,7 +62,7 @@ test("json_palette_item_has_correct_styling", async ({ page }) => {
   await homePage.waitForPageToLoad();
 
   // Verify JSON palette item exists and has palette-item class
-  const jsonItem = await homePage.getJsonPaletteItem();
+  const jsonItem = page.getByTitle("JSON operations");
   await expect(jsonItem).toHaveClass(/palette-item/);
 });
 
@@ -72,6 +80,8 @@ test("json_node_persists_after_addition", async ({ page }) => {
   await homePage.verifyJsonNodeAppearedOnCanvas();
 
   // Verify the node contains expected content
-  const jsonNode = await homePage.getJsonNodeFromCanvas();
+  const jsonNode = page.locator('[class*="react-node"]').filter({ hasText: /JSON/ });
   await expect(jsonNode).toBeVisible();
 });
+
+

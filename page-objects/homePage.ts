@@ -6,7 +6,6 @@ export class HomePage {
 
   // Selectors
   private readonly shareButton = { title: "Copy shareable URL to clipboard" };
-  private readonly titleText = /visual-programming/;
   private readonly jsonPaletteItem = { title: "JSON operations" };
 
   constructor(page: Page) {
@@ -21,25 +20,10 @@ export class HomePage {
   }
 
   /**
-   * Verify the page title contains the expected text
+   * Internal helper: Get the share button element
    */
-  async verifyPageTitle(): Promise<void> {
-    await expect(this.page).toHaveTitle(this.titleText);
-  }
-
-  /**
-   * Get the share button element
-   */
-  async getShareButton() {
+  private async getShareButton() {
     return this.page.getByTitle(this.shareButton.title);
-  }
-
-  /**
-   * Click the share button to copy URL to clipboard
-   */
-  async clickShareButton(): Promise<void> {
-    const button = await this.getShareButton();
-    await button.click();
   }
 
   /**
@@ -51,37 +35,6 @@ export class HomePage {
   }
 
   /**
-   * Verify share button contains expected text
-   */
-  async verifyShareButtonText(expectedText: string): Promise<void> {
-    const button = await this.getShareButton();
-    await expect(button).toContainText(expectedText);
-  }
-
-  /**
-   * Verify the URL was copied to clipboard (button shows confirmation)
-   */
-  async verifyURLCopiedConfirmation(): Promise<void> {
-    const button = await this.getShareButton();
-    await expect(button).toContainText("URL copied!");
-  }
-
-  /**
-   * Click share button and verify confirmation message
-   */
-  async shareAndVerifyConfirmation(): Promise<void> {
-    await this.clickShareButton();
-    await this.verifyURLCopiedConfirmation();
-  }
-
-  /**
-   * Get the page title text
-   */
-  async getPageTitle(): Promise<string | null> {
-    return await this.page.title();
-  }
-
-  /**
    * Wait for the page to load (wait for share button to be visible)
    */
   async waitForPageToLoad(): Promise<void> {
@@ -90,26 +43,10 @@ export class HomePage {
   }
 
   /**
-   * Verify the share button is not visible
+   * Internal helper: Get the JSON palette item element
    */
-  async verifyShareButtonIsNotVisible(): Promise<void> {
-    const button = await this.getShareButton();
-    await expect(button).not.toBeVisible();
-  }
-
-  /**
-   * Get the JSON palette item element
-   */
-  async getJsonPaletteItem() {
+  private async getJsonPaletteItem() {
     return this.page.getByTitle(this.jsonPaletteItem.title);
-  }
-
-  /**
-   * Verify JSON palette item is visible
-   */
-  async verifyJsonPaletteItemIsVisible(): Promise<void> {
-    const jsonItem = await this.getJsonPaletteItem();
-    await expect(jsonItem).toBeVisible();
   }
 
   /**
@@ -121,35 +58,10 @@ export class HomePage {
   }
 
   /**
-   * Verify JSON palette item contains the expected label text
-   */
-  async verifyJsonPaletteItemLabel(expectedLabel: string): Promise<void> {
-    const jsonItem = await this.getJsonPaletteItem();
-    const labelElement = jsonItem.locator(".palette-label");
-    await expect(labelElement).toContainText(expectedLabel);
-  }
-
-  /**
-   * Verify JSON palette item contains the expected description
-   */
-  async verifyJsonPaletteItemDescription(expectedDesc: string): Promise<void> {
-    const jsonItem = await this.getJsonPaletteItem();
-    const descElement = jsonItem.locator(".palette-desc");
-    await expect(descElement).toContainText(expectedDesc);
-  }
-
-  /**
    * Verify a JSON node was created on the canvas (checks for element with "JSON" in text)
    */
   async verifyJsonNodeAppearedOnCanvas(): Promise<void> {
     const jsonNode = this.page.locator('[class*="react-node"]').filter({ hasText: /JSON/ });
     await expect(jsonNode).toBeVisible({ timeout: 5000 });
-  }
-
-  /**
-   * Get JSON node from canvas
-   */
-  async getJsonNodeFromCanvas() {
-    return this.page.locator('[class*="react-node"]').filter({ hasText: /JSON/ });
   }
 }
