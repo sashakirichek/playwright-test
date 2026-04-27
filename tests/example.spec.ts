@@ -1,18 +1,40 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
+import { HomePage } from "../page-objects/homePage";
 
-test('has title', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
-
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Playwright/);
+test("has title", async ({ page }) => {
+  const homePage = new HomePage(page);
+  await homePage.navigateToHomePage();
+  await homePage.verifyPageTitle();
 });
 
-test('get started link', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+test("get started link", async ({ page }) => {
+  const homePage = new HomePage(page);
+  await homePage.navigateToHomePage();
+  await homePage.verifyShareButtonIsVisible();
+  await homePage.verifyShareButtonText("Share");
+  await homePage.shareAndVerifyConfirmation();
+});
 
-  // Click the get started link.
-  await page.getByRole('link', { name: 'Get started' }).click();
+test("verify page loads successfully", async ({ page }) => {
+  const homePage = new HomePage(page);
+  await homePage.navigateToHomePage();
+  await homePage.waitForPageToLoad();
+  const title = await homePage.getPageTitle();
+  expect(title).toContain("visual-programming");
+});
 
-  // Expects page to have a heading with the name of Installation.
-  await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
+test("share button functionality", async ({ page }) => {
+  const homePage = new HomePage(page);
+  await homePage.navigateToHomePage();
+  await homePage.verifyShareButtonIsVisible();
+  await homePage.clickShareButton();
+  await homePage.verifyURLCopiedConfirmation();
+});
+
+test("addJsonElement_showsSuccessfully", async ({ page }) => {
+  // test new functionality of added clickable element:
+  /*
+    <div class="palette-item" title="JSON operations" style="border-left-color: var(--sys-pink);"><span class="palette-label">JS  JSON</span><span class="palette-desc">JSON operations</span></div>
+    */
+  // new react node should apper on react-node pane with the name JSON
 });
