@@ -11,7 +11,7 @@ test("get started link", async ({ page }) => {
   const homePage = new HomePage(page);
   await homePage.navigateToHomePage();
   await homePage.verifyShareButtonIsVisible();
-  
+
   const shareButton = page.getByTitle("Copy shareable URL to clipboard");
   await expect(shareButton).toContainText("Share");
   await shareButton.click();
@@ -30,7 +30,7 @@ test("share button functionality", async ({ page }) => {
   const homePage = new HomePage(page);
   await homePage.navigateToHomePage();
   await homePage.verifyShareButtonIsVisible();
-  
+
   const shareButton = page.getByTitle("Copy shareable URL to clipboard");
   await shareButton.click();
   await expect(shareButton).toContainText("URL copied!");
@@ -84,4 +84,6 @@ test("json_node_persists_after_addition", async ({ page }) => {
   await expect(jsonNode).toBeVisible();
 });
 
-
+test("SolutionsPanel_isVisible", async ({ page }) => {
+  // test "Solutions" button and new panel that should show up with possibility to save current solution
+});
