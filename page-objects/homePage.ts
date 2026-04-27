@@ -7,6 +7,8 @@ export class HomePage {
   // Selectors
   private readonly shareButton = { title: "Copy shareable URL to clipboard" };
   private readonly jsonPaletteItem = { title: "JSON operations" };
+  private readonly solutionsButton = { text: "Solutions" };
+  private readonly solutionsPanelSelector = '[class*="solutions-panel"]';
 
   constructor(page: Page) {
     this.page = page;
@@ -63,5 +65,37 @@ export class HomePage {
   async verifyJsonNodeAppearedOnCanvas(): Promise<void> {
     const jsonNode = this.page.locator('[class*="react-node"]').filter({ hasText: /JSON/ });
     await expect(jsonNode).toBeVisible({ timeout: 5000 });
+  }
+
+  /**
+   * Click the Solutions button to open the solutions panel
+   */
+  async clickSolutionsButton(): Promise<void> {
+    const button = this.page.getByRole('button', { name: 'Solutions' });
+    await button.click();
+  }
+
+  /**
+   * Verify the solutions panel is visible
+   */
+  async verifySolutionsPanelIsVisible(): Promise<void> {
+    const panel = this.page.locator(this.solutionsPanelSelector);
+    await expect(panel).toBeVisible({ timeout: 5000 });
+  }
+
+  /**
+   * Verify the save solution button is visible within the solutions panel
+   */
+  async verifySaveSolutionButtonIsVisible(): Promise<void> {
+    const saveButton = this.page.getByRole('button', { name: /Save|save/i });
+    await expect(saveButton).toBeVisible();
+  }
+
+  /**
+   * Click the save solution button
+   */
+  async clickSaveSolutionButton(): Promise<void> {
+    const saveButton = this.page.getByRole('button', { name: /Save|save/i });
+    await saveButton.click();
   }
 }
