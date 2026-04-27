@@ -32,9 +32,46 @@ test("share button functionality", async ({ page }) => {
 });
 
 test("addJsonElement_showsSuccessfully", async ({ page }) => {
-  // test new functionality of added clickable element:
-  /*
-    <div class="palette-item" title="JSON operations" style="border-left-color: var(--sys-pink);"><span class="palette-label">JS  JSON</span><span class="palette-desc">JSON operations</span></div>
-    */
-  // new react node should apper on react-node pane with the name JSON
+  const homePage = new HomePage(page);
+  await homePage.navigateToHomePage();
+  await homePage.waitForPageToLoad();
+
+  // Verify JSON palette item is visible in the palette
+  await homePage.verifyJsonPaletteItemIsVisible();
+  await homePage.verifyJsonPaletteItemLabel("JSON");
+  await homePage.verifyJsonPaletteItemDescription("JSON operations");
+
+  // Click JSON palette item to add it to the canvas
+  await homePage.clickJsonPaletteItem();
+
+  // Verify a new JSON node appeared on the canvas
+  await homePage.verifyJsonNodeAppearedOnCanvas();
+});
+
+test("json_palette_item_has_correct_styling", async ({ page }) => {
+  const homePage = new HomePage(page);
+  await homePage.navigateToHomePage();
+  await homePage.waitForPageToLoad();
+
+  // Verify JSON palette item exists and has palette-item class
+  const jsonItem = await homePage.getJsonPaletteItem();
+  await expect(jsonItem).toHaveClass(/palette-item/);
+});
+
+test("json_node_persists_after_addition", async ({ page }) => {
+  const homePage = new HomePage(page);
+  await homePage.navigateToHomePage();
+  await homePage.waitForPageToLoad();
+
+  // Add JSON element
+  await homePage.clickJsonPaletteItem();
+  await homePage.verifyJsonNodeAppearedOnCanvas();
+
+  // Verify node still exists after a small delay
+  await page.waitForTimeout(1000);
+  await homePage.verifyJsonNodeAppearedOnCanvas();
+
+  // Verify the node contains expected content
+  const jsonNode = await homePage.getJsonNodeFromCanvas();
+  await expect(jsonNode).toBeVisible();
 });

@@ -7,6 +7,7 @@ export class HomePage {
   // Selectors
   private readonly shareButton = { title: "Copy shareable URL to clipboard" };
   private readonly titleText = /visual-programming/;
+  private readonly jsonPaletteItem = { title: "JSON operations" };
 
   constructor(page: Page) {
     this.page = page;
@@ -94,5 +95,61 @@ export class HomePage {
   async verifyShareButtonIsNotVisible(): Promise<void> {
     const button = await this.getShareButton();
     await expect(button).not.toBeVisible();
+  }
+
+  /**
+   * Get the JSON palette item element
+   */
+  async getJsonPaletteItem() {
+    return this.page.getByTitle(this.jsonPaletteItem.title);
+  }
+
+  /**
+   * Verify JSON palette item is visible
+   */
+  async verifyJsonPaletteItemIsVisible(): Promise<void> {
+    const jsonItem = await this.getJsonPaletteItem();
+    await expect(jsonItem).toBeVisible();
+  }
+
+  /**
+   * Click the JSON palette item to add it to the canvas
+   */
+  async clickJsonPaletteItem(): Promise<void> {
+    const jsonItem = await this.getJsonPaletteItem();
+    await jsonItem.click();
+  }
+
+  /**
+   * Verify JSON palette item contains the expected label text
+   */
+  async verifyJsonPaletteItemLabel(expectedLabel: string): Promise<void> {
+    const jsonItem = await this.getJsonPaletteItem();
+    const labelElement = jsonItem.locator(".palette-label");
+    await expect(labelElement).toContainText(expectedLabel);
+  }
+
+  /**
+   * Verify JSON palette item contains the expected description
+   */
+  async verifyJsonPaletteItemDescription(expectedDesc: string): Promise<void> {
+    const jsonItem = await this.getJsonPaletteItem();
+    const descElement = jsonItem.locator(".palette-desc");
+    await expect(descElement).toContainText(expectedDesc);
+  }
+
+  /**
+   * Verify a JSON node was created on the canvas (checks for element with "JSON" in text)
+   */
+  async verifyJsonNodeAppearedOnCanvas(): Promise<void> {
+    const jsonNode = this.page.locator('[class*="react-node"]').filter({ hasText: /JSON/ });
+    await expect(jsonNode).toBeVisible({ timeout: 5000 });
+  }
+
+  /**
+   * Get JSON node from canvas
+   */
+  async getJsonNodeFromCanvas() {
+    return this.page.locator('[class*="react-node"]').filter({ hasText: /JSON/ });
   }
 }
